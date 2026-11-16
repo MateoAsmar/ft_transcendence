@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package transcendence.matchmaking;
+
+message UserContext {
+  int32 user_id = 1;
+  string username = 2;
+}
+
+message QueueForMatchRequest {
+  UserContext context = 1;
+  string mode = 2;
+}
+
+message CancelQueueRequest {
+  UserContext context = 1;
+}
+
+message QueueResponse {
+  bool accepted = 1;
+  string message = 2;
+}
+
+service MatchmakingService {
+  rpc QueueForMatch (QueueForMatchRequest) returns (QueueResponse);
+  rpc CancelQueue (CancelQueueRequest) returns (QueueResponse);
+}

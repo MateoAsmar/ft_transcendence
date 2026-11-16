@@ -1,0 +1,124 @@
+syntax = "proto3";
+
+package transcendence.friends;
+
+message UserContext {
+  int32 user_id = 1;
+  string username = 2;
+}
+
+message ContextRequest {
+  UserContext context = 1;
+}
+
+message Friend {
+  int32 id = 1;
+  string username = 2;
+  string display_name = 3;
+  string avatar_url = 4;
+  string oauth_avatar_url = 5;
+  string friend_since = 6;
+  bool is_online = 7;
+  string presence_updated_at = 8;
+}
+
+message ListFriendsResponse {
+  repeated Friend friends = 1;
+}
+
+message FriendRequestRecord {
+  int32 id = 1;
+  int32 sender_id = 2;
+  int32 receiver_id = 3;
+  string status = 4;
+  string created_at = 5;
+  string username = 6;
+  string display_name = 7;
+  string avatar_url = 8;
+}
+
+message FriendRequestsResponse {
+  repeated FriendRequestRecord requests = 1;
+}
+
+message SendFriendRequestRequest {
+  UserContext context = 1;
+  string username = 2;
+}
+
+message FriendRequestDecisionRequest {
+  UserContext context = 1;
+  int32 request_id = 2;
+}
+
+message RemoveFriendRequest {
+  UserContext context = 1;
+  string username = 2;
+}
+
+message MutationResponse {
+  bool success = 1;
+  string message = 2;
+  int32 request_id = 3;
+}
+
+message ListInvitationsResponse {
+  repeated GameInvitation invitations = 1;
+}
+
+message GameInvitation {
+  int32 id = 1;
+  int32 sender_id = 2;
+  string sender_username = 3;
+  string sender_display_name = 4;
+  string room_code = 5;
+  string status = 6;
+  string created_at = 7;
+  string expires_at = 8;
+}
+
+message SendGameInvitationRequest {
+  UserContext context = 1;
+  int32 friend_id = 2;
+  string room_code = 3;
+}
+
+message GameInvitationDecisionRequest {
+  UserContext context = 1;
+  int32 invitation_id = 2;
+}
+
+message SearchUsersRequest {
+  UserContext context = 1;
+  string query = 2;
+}
+
+message SearchedUser {
+  int32 id = 1;
+  string username = 2;
+  string display_name = 3;
+  string avatar_url = 4;
+  bool is_friend = 5;
+  bool request_sent = 6;
+  bool request_received = 7;
+}
+
+message SearchUsersResponse {
+  repeated SearchedUser users = 1;
+}
+
+service FriendsService {
+  rpc ListFriends (ContextRequest) returns (ListFriendsResponse);
+  rpc ListOnlineFriends (ContextRequest) returns (ListFriendsResponse);
+  rpc GetReceivedRequests (ContextRequest) returns (FriendRequestsResponse);
+  rpc GetSentRequests (ContextRequest) returns (FriendRequestsResponse);
+  rpc SendFriendRequest (SendFriendRequestRequest) returns (MutationResponse);
+  rpc AcceptFriendRequest (FriendRequestDecisionRequest) returns (MutationResponse);
+  rpc RejectFriendRequest (FriendRequestDecisionRequest) returns (MutationResponse);
+  rpc RemoveFriend (RemoveFriendRequest) returns (MutationResponse);
+  rpc SearchUsers (SearchUsersRequest) returns (SearchUsersResponse);
+  rpc ListInvitations (ContextRequest) returns (ListInvitationsResponse);
+  rpc SendGameInvitation (SendGameInvitationRequest) returns (MutationResponse);
+  rpc AcceptGameInvitation (GameInvitationDecisionRequest) returns (MutationResponse);
+  rpc RejectGameInvitation (GameInvitationDecisionRequest) returns (MutationResponse);
+}

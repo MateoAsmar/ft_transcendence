@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package transcendence.game;
+
+message UserContext {
+  int32 user_id = 1;
+  string username = 2;
+}
+
+message ContextRequest {
+  UserContext context = 1;
+}
+
+message StartGameResponse {
+  string status = 1;
+  string message = 2;
+}
+
+message EndGameRequest {
+  UserContext context = 1;
+  int32 player1_score = 2;
+  int32 player2_score = 3;
+  string game_mode = 4; // "ai" or "local"
+}
+
+message EndGameResponse {
+  string message = 1;
+  int32 game_id = 2;
+  string winner = 3;
+}
+
+message GetStatsResponse {
+  string username = 1;
+  int32 total_games = 2;
+  int32 wins = 3;
+  int32 losses = 4;
+  string win_rate = 5;
+}
+
+message GameHistoryEntry {
+  int32 game_id = 1;
+  int32 player1_score = 2;
+  int32 player2_score = 3;
+  string result = 4;
+  string opponent = 5;
+}
+
+message GetHistoryResponse {
+  string username = 1;
+  repeated GameHistoryEntry games = 2;
+  int32 total_games = 3;
+  string message = 4;
+}
+
+service GameSessionService {
+  rpc StartGame (ContextRequest) returns (StartGameResponse);
+  rpc EndGame (EndGameRequest) returns (EndGameResponse);
+  rpc GetStats (ContextRequest) returns (GetStatsResponse);
+  rpc GetHistory (ContextRequest) returns (GetHistoryResponse);
+}

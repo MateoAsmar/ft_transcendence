@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package transcendence.stats;
+
+message UserContext {
+  int32 user_id = 1;
+  string username = 2;
+}
+
+message ContextRequest {
+  UserContext context = 1;
+}
+
+message GetDashboardDetailedResponse {
+  bool success = 1;
+  int32 wins = 2;
+  int32 losses = 3;
+  int32 total_games = 4;
+  int32 current_streak = 5;
+  int32 games_today = 6;
+  int32 games_week = 7;
+  double avg_score = 8;
+  double avg_score_against = 9;
+  string best_score = 10;
+  int32 ai_wins = 11;
+  int32 player_wins = 12;
+  int32 recent_win_rate = 13;
+  repeated int32 win_rate_trend = 14;
+  repeated string achievements = 15;
+}
+
+message SessionSummary {
+  int32 id = 1;
+  int32 player1_id = 2;
+  int32 player2_id = 3;
+  int32 player1_score = 4;
+  int32 player2_score = 5;
+  int32 winner_id = 6;
+  string created_at = 7;
+  string player1_name = 8;
+  string player2_name = 9;
+  string result = 10;
+  int32 my_score = 11;
+  int32 opponent_score = 12;
+  string opponent_name = 13;
+  string game_mode = 14;
+}
+
+message GetDashboardSessionsResponse {
+  bool success = 1;
+  repeated SessionSummary sessions = 2;
+}
+
+message GetLeaderboardRequest {
+  UserContext context = 1;
+  string period = 2;
+}
+
+message LeaderboardEntry {
+  int32 id = 1;
+  string username = 2;
+  string display_name = 3;
+  string avatar_url = 4;
+  string oauth_avatar_url = 5;
+  int32 wins = 6;
+  int32 losses = 7;
+  int32 total_games = 8;
+  double win_rate = 9;
+}
+
+message UserRanking {
+  int32 rank = 1;
+  int32 id = 2;
+  string username = 3;
+  string display_name = 4;
+  int32 wins = 5;
+  int32 losses = 6;
+  int32 total_games = 7;
+  double win_rate = 8;
+}
+
+message GetLeaderboardResponse {
+  bool success = 1;
+  string period = 2;
+  repeated LeaderboardEntry leaderboard = 3;
+  UserRanking user_ranking = 4;
+}
+
+service StatsService {
+  rpc GetDashboardDetailed (ContextRequest) returns (GetDashboardDetailedResponse);
+  rpc GetDashboardSessions (ContextRequest) returns (GetDashboardSessionsResponse);
+  rpc GetLeaderboard (GetLeaderboardRequest) returns (GetLeaderboardResponse);
+}

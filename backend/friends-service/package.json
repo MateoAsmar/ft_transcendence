@@ -1,0 +1,29 @@
+{
+    "name":  "@transcendence/friends-service",
+    "version":  "1.0.0",
+    "private":  true,
+    "description":  "Friends microservice for Transcendence",
+    "type":  "commonjs",
+    "main":  "dist/index.js",
+    "types":  "dist/index.d.ts",
+    "scripts":  {
+                    "build":  "tsc -b",
+                    "clean":  "rimraf dist",
+                    "dev":  "ts-node-dev --respawn --transpile-only src/index.ts",
+                    "start":  "node dist/index.js"
+                },
+    "dependencies":  {
+                         "@grpc/grpc-js":  "^1.9.13",
+                         "@grpc/proto-loader":  "^0.7.13",
+                         "better-sqlite3":  "^12.4.1",
+                         "dotenv":  "^17.2.3",
+                         "kafkajs":  "^2.2.4"
+                     },
+    "devDependencies":  {
+                            "@types/better-sqlite3":  "^7.6.13",
+                            "@types/node":  "^24.7.2",
+                            "rimraf":  "^6.0.1",
+                            "ts-node-dev":  "^2.0.0",
+                            "typescript":  "^5.9.3"
+                        }
+}

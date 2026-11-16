@@ -1,0 +1,126 @@
+syntax = "proto3";
+
+package transcendence.profile;
+
+message UserContext {
+  int32 user_id = 1;
+  string username = 2;
+}
+
+message GetProfileRequest {
+  UserContext context = 1;
+}
+
+message Profile {
+  int32 id = 1;
+  string username = 2;
+  string display_name = 3;
+  string email = 4;
+  string avatar_url = 5;
+  string oauth_avatar_url = 6;
+  string auth_provider = 7;
+  bool twofa_enabled = 8;
+  string created_at = 9;
+}
+
+message GetProfileResponse {
+  Profile profile = 1;
+}
+
+message UpdateProfileRequest {
+  UserContext context = 1;
+  string username = 2;
+  string display_name = 3;
+}
+
+message UpdateProfileResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message GetHistoryRequest {
+  UserContext context = 1;
+  int32 page = 2;
+  int32 limit = 3;
+}
+
+message HistoryEntry {
+  int32 id = 1;
+  string opponent_username = 2;
+  string result = 3;
+  string played_at = 4;
+  int32 player_score = 5;
+  int32 opponent_score = 6;
+  string mode = 7;
+}
+
+message PaginationInfo {
+  int32 page = 1;
+  int32 limit = 2;
+  int32 total = 3;
+  int32 totalPages = 4;
+  bool hasNext = 5;
+  bool hasPrev = 6;
+}
+
+message GetHistoryResponse {
+  repeated HistoryEntry history = 1;
+  PaginationInfo pagination = 2;
+}
+
+message GetStatsRequest {
+  UserContext context = 1;
+}
+
+message GetStatsResponse {
+  int32 total_games = 1;
+  int32 wins = 2;
+  int32 losses = 3;
+}
+
+message UpdateAvatarRequest {
+  UserContext context = 1;
+  string avatar_url = 2;
+}
+
+message UpdateAvatarResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message DeleteAccountRequest {
+  UserContext context = 1;
+}
+
+message DeleteAccountResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message AnonymizeAccountRequest {
+  UserContext context = 1;
+}
+
+message AnonymizeAccountResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ExportUserDataRequest {
+  UserContext context = 1;
+}
+
+message ExportUserDataResponse {
+  string data_json = 1;
+}
+
+service ProfileService {
+  rpc GetProfile (GetProfileRequest) returns (GetProfileResponse);
+  rpc UpdateProfile (UpdateProfileRequest) returns (UpdateProfileResponse);
+  rpc GetHistory (GetHistoryRequest) returns (GetHistoryResponse);
+  rpc GetStats (GetStatsRequest) returns (GetStatsResponse);
+  rpc UpdateAvatar (UpdateAvatarRequest) returns (UpdateAvatarResponse);
+  rpc DeleteAccount (DeleteAccountRequest) returns (DeleteAccountResponse);
+  rpc AnonymizeAccount (AnonymizeAccountRequest) returns (AnonymizeAccountResponse);
+  rpc ExportUserData (ExportUserDataRequest) returns (ExportUserDataResponse);
+}

@@ -1,0 +1,187 @@
+services:
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    restart: on-failure
+    depends_on:
+      - api-gateway
+    networks:
+      - app-network
+    env_file:
+      - .env
+      - .env.secrets
+
+  api-gateway:
+    container_name: api-gateway
+    build:
+      context: .
+      dockerfile: backend/api-gateway/Dockerfile
+    ports:
+      - "8000:8000"
+    restart: on-failure
+    environment:
+      PORT: 8000
+    depends_on:
+      - database
+      - profile-service
+      - friends-service
+      - stats-service
+      - game-session-service
+      - matchmaking-service
+      - kafka
+    volumes:
+      - transcendence_db:/data
+      - ./database/uploads:/uploads
+    networks:
+      - app-network
+    env_file:
+      - .env
+      - .env.secrets
+
+  profile-service:
+    container_name: profile-service
+    build:
+      context: .
+      dockerfile: backend/profile-service/Dockerfile
+    restart: on-failure
+    depends_on:
+      - database
+      - kafka
+    volumes:
+      - transcendence_db:/data
+    networks:
+      - app-network
+    env_file:
+      - .env
+      - .env.secrets
+
+  friends-service:
+    container_name: friends-service
+    build:
+      context: .
+      dockerfile: backend/friends-service/Dockerfile
+    restart: on-failure
+    depends_on:
+      - database
+      - kafka
+    volumes:
+      - transcendence_db:/data
+    networks:
+      - app-network
+    env_file:
+      - .env
+      - .env.secrets
+
+  stats-service:
+    container_name: stats-service
+    build:
+      context: .
+      dockerfile: backend/stats-service/Dockerfile
+    restart: on-failure
+    depends_on:
+      - database
+    volumes:
+      - transcendence_db:/data
+    networks:
+      - app-network
+    env_file:
+      - .env
+      - .env.secrets
+
+  game-session-service:
+    container_name: game-session-service
+    build:
+      context: .
+      dockerfile: backend/game-session-service/Dockerfile
+    ports:
+      - "4002:4002"
+    restart: on-failure
+    depends_on:
+      - database
+      - kafka
+    volumes:
+      - transcendence_db:/data
+    networks:
+      - app-network
+    env_file:
+      - .env
+      - .env.secrets
+
+  matchmaking-service:
+    container_name: matchmaking-service
+    build:
+      context: .
+      dockerfile: backend/matchmaking-service/Dockerfile
+    restart: on-failure
+    depends_on:
+      - kafka
+    networks:
+      - app-network
+    env_file:
+      - .env
+      - .env.secrets
+
+  database:
+    container_name: database
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    volumes:
+      - transcendence_db:/data
+    restart: on-failure
+    networks:
+      - app-network
+
+  kafka:
+    container_name: kafka
+    build:
+      context: .
+      dockerfile: backend/kafka/Dockerfile
+    restart: on-failure
+    env_file:
+      - .env
+    depends_on:
+      - zookeeper
+    networks:
+      - app-network
+
+  zookeeper:
+    container_name: zookeeper
+    build:
+      context: .
+      dockerfile: backend/zookeeper/Dockerfile
+    restart: on-failure
+    env_file:
+      - .env
+    networks:
+      - app-network
+
+  nginx:
+    container_name: nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "8080:443"
+    restart: on-failure
+    depends_on:
+      - frontend
+      - api-gateway
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  transcendence_db:
+    driver: local
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: ${HOST_DB_PATH:-./database/dbdata}
