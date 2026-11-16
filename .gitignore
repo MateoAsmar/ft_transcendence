@@ -1,0 +1,17 @@
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+
+# Local database files and user uploads
+database/dbdata/
+database/uploads/avatars/
+
+# JavaScript dependencies and build output
+node_modules/
+frontend/dist/
+backend/*/dist/
+
+# Local editor and OS files
+.DS_Store
+Thumbs.db
